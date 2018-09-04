@@ -1,0 +1,14 @@
+* How to use this repository
+1. Fork it to your personal GitHub account
+2. Check out your fork
+3. Make your fork private and add me (JoeOsborn) as a collaborator
+4. Do all your work in the work branch 
+5. Commit changes and push to your fork
+
+* When you are ready to submit homework
+1. Open a pull request against your own master branch.  This way your work can stay hidden from other students except those with permission to see it.
+2. Submit to Sakai:
+  - The link to the pull request
+  - The hash of the latest commit in the PR
+  - Your teammate, if any
+  - Any issues or problems I should know about
