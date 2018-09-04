@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Path Planning Four Ways</title>
+<meta name="generator" content="Org mode" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Path Planning Four Ways</h1>
+<p>
+This assignment is the first part of the planning problem sequence.
+</p>
+
+<p>
+In this project, you will implement four different algorithms that approach <i>path planning</i> as a problem in graph search.
+There are other approaches to path planning in different domains, but here we focus on finding paths in four-connected graphs (i.e., the agent can move north, east, south, and west) where nodes have associated movement costs.
+We&rsquo;ll implement and compare four related algorithms:
+</p>
+
+<ol class="org-ol">
+<li>Breadth-first search</li>
+<li>Dijkstra&rsquo;s algorithm</li>
+<li>Best-first search</li>
+<li>A*</li>
+</ol>
+
+<p>
+You may have encountered some of these algorithms in previous classes, since graph search is a fundamental technique in computer science.
+If not, don&rsquo;t worry!
+In this course, assignments include a series of <i>reflections</i> intended to help you develop the insights required to implement the assignment.
+Let&rsquo;s begin with a reflection to practice. 
+[&gt;1;95;0cType] your answers (with the question numbers) into <code>path_planning.txt</code>.
+</p>
+
+<ol class="org-ol">
+<li>In your own words, what is a <i>graph</i> in the discrete mathematics/computer science sense?  How might you represent a graph using data structures in a computer program?  Pseudo-code is fine.</li>
+<li>Have you encountered any of the above algorithms before?</li>
+<li>Besides planning movement through a physical space, what other uses do you think they might have in analyzing real-world systems, understanding the behavior of computer programs, or other areas?  Describe one other compelling use case for graph search.</li>
+<li>If we restrict our attention to four-connected graphs (like chess-boards or grids), does that change our answer to question (1)?  Is there another, more appropriate representation we might consider that saves memory space or seems easier to process?</li>
+</ol>
+
+<p>
+In these assignments, you will also find source code examples and skeletons; it is highly recommended that you type these out again by hand rather than copying and pasting, to ensure that you read them closely.
+Some code snippets will be labeled &ldquo;Example&rdquo;, and you are encouraged to try them out either by inserting them directly into your code and seeing what they do, or experimenting at the command line interpreter:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ python -i path_planning.py <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">In your shell prompt</span>
+&gt;&gt;&gt; print(<span style="color: #008000;">"Let's try it out!"</span>)
+</pre>
+</div>
+
+<p>
+The goal of this assignment is for you to:
+</p>
+<ul class="org-ul">
+<li>Familiarize yourself with Python if you have not encountered it before.</li>
+<li>Read in a data file and produce a representation of the world such that you can solve a generic search problem.</li>
+<li>Learn the ins and outs of four different search algorithms.</li>
+<li>Consider how <i>domain knowledge</i> can help guide the development of AI algorithms, and the tension between generic and specialized approaches.</li>
+</ul>
+
+<p>
+Make sure your Python file for this assignment, <code>path_planning.py</code>, has these modules imported:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">from</span> typing <span style="color: #0000FF;">import</span> Set, Dict, Tuple, Optional, Sequence, List
+<span style="color: #0000FF;">import</span> heapq
+<span style="color: #0000FF;">import</span> math
+<span style="color: #0000FF;">import</span> time
+</pre>
+</div>
+
+<p>
+Let&rsquo;s begin by loading a map into a two-dimensional array of unicode characters (specifically, emoji).
+We are using Python 3 and annotating types wherever we can.
+If you encounter a bug in your program, begin by running <code>mypy path_planning.py</code> to ensure there are no trivial type errors to deal with first.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">This is how we write a type alias in Python</span>
+<span style="color: #BA36A5;">Map</span> = List[List[<span style="color: #006FE0;">str</span>]]
+<span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Now we can write load_map in terms of Map:</span>
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">load_map</span>(mapfile:<span style="color: #006FE0;">str</span>) -&gt; Map:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">with</span> <span style="color: #006FE0;">open</span>(mapfile,encoding=<span style="color: #008000;">'utf-8'</span>) <span style="color: #0000FF;">as</span> infile:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">This "list comprehension" is a very useful syntactic trick</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> [<span style="color: #006FE0;">list</span>(line.rstrip()) <span style="color: #0000FF;">for</span> line <span style="color: #0000FF;">in</span> infile]
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Example</span>
+<span style="color: #BA36A5;">terrain</span> = load_map(<span style="color: #008000;">'terrain.txt'</span>)
+<span style="color: #0000FF;">print</span>(terrain)
+</pre>
+</div>
+
+<p>
+Cute!
+</p>
+
+<ol class="org-ol">
+<li value="5">Describe, in your own words, the format of <code>terrain.txt</code> and the implementation of <code>load_map</code>.</li>
+<li>If we want to talk about a specific spot in the terrain (by an \(x\) and \(y\) coordinate), how would we write that?  Python indexes lists using square brackets, so we might write <code>l[5]</code> for the sixth element of a list (by zero-indexing).</li>
+<li>What are the neighbors of the cell at \((3,3)\)?  Given a coordinate pair \((x,y)\), what are its four neighbors in terms of mathematical operations on \(x\) and \(y\)?</li>
+</ol>
+
+<p>
+Now, implement a function <code>find_neighbors</code> which gives the four neighbor coordinate pairs of a given location.
+We are going to add an additional wrinkle here, which is that different tiles have different associated movement costs:
+</p>
+
+<ul class="org-ul">
+<li>🌿, 🌉, and 🌲 cost 1 point since they&rsquo;re easy to walk past</li>
+<li>🌼 costs 2 points since we&rsquo;d rather not stomp on the flowers.</li>
+<li>🌊 costs 5 points since we really don&rsquo;t want to get our clothes wet.</li>
+</ul>
+
+<p>
+So, depending on the kind of tile at a given location, we also want to pick the right <i>cost</i> for moving through that tile.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #BA36A5;">Point</span> = Tuple[<span style="color: #006FE0;">int</span>, <span style="color: #006FE0;">int</span>]
+<span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Now we can define our function in terms of Points</span>
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">find_neighbors</span>(terrain:Map, p:Point) -&gt; List[Tuple[Point, <span style="color: #006FE0;">int</span>]]:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Python has destructuring assignment.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">You could just as well write `x = p[0]` and `y = p[1]`.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">x</span>,<span style="color: #BA36A5;">y</span> = p
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   neighbors : List[Tuple[Point,<span style="color: #006FE0;">int</span>]] = []
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">A. Your code here...</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Feel free to introduce other variables if they'd be helpful too.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> neighbors
+</pre>
+</div>
+
+<p>
+To try it out:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Example</span>
+<span style="color: #BA36A5;">terrain</span> = load_map(<span style="color: #008000;">'terrain.txt'</span>)
+<span style="color: #0000FF;">print</span>(find_neighbors(terrain, (3,3)))
+</pre>
+</div>
+
+<p>
+Let&rsquo;s take a quick detour to implement a helper function to print a path nicely:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">def</span> <span style="color: #006699;">pretty_print_path</span>(terrain: Map, path: List[Point]):
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">emojis</span> = [<span style="color: #008000;">'&#128512;'</span>,<span style="color: #008000;">'&#128513;'</span>,<span style="color: #008000;">'&#128514;'</span>,<span style="color: #008000;">'&#129315;'</span>,<span style="color: #008000;">'&#128515;'</span>,<span style="color: #008000;">'&#128516;'</span>,<span style="color: #008000;">'&#128517;'</span>,<span style="color: #008000;">'&#128518;'</span>,<span style="color: #008000;">'&#128521;'</span>,<span style="color: #008000;">'&#128522;'</span>,<span style="color: #008000;">'&#128523;'</span>]
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">This is a "dictionary comprehension" like the list comprehension above</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">path2len</span> = {location:distance <span style="color: #0000FF;">for</span> distance,location <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">enumerate</span>(path)}
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">output</span> = []
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">for</span> yy,row <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">enumerate</span>(terrain):
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">row_str</span> = <span style="color: #008000;">''</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">for</span> xx, cur <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">enumerate</span>(row):
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">if</span> (xx,yy) <span style="color: #0000FF;">in</span> path2len:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">row_str</span> += emojis[path2len[(xx,yy)] % <span style="color: #006FE0;">len</span>(emojis)]
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">else</span>:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">row_str</span> += cur
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   output.append(row_str)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> <span style="color: #008000;">'\\n'</span>.join(output)
+
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">print_search_result</span>(terrain:Map, result:Tuple[<span style="color: #006FE0;">int</span>, <span style="color: #006FE0;">int</span>, Optional[List[Point]]]) -&gt; <span style="color: #D0372D;">None</span>:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">print</span>(<span style="color: #008000;">"Visited:"</span>,result[0])
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">if</span> result[2]:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">print</span>(<span style="color: #008000;">"Best path cost:"</span>,result[1])
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">print</span>(pretty_print_path(terrain, result[2]))
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">else</span>:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">print</span>(<span style="color: #008000;">"No path found"</span>)
+
+</pre>
+</div>
+
+<p>
+Now that we have our nodes (the terrain graph) and our edge relation (<code>find_neighbors</code>), we are ready to implement graph search!
+</p>
+
+<div id="outline-container-orgfea88d9" class="outline-2">
+<h2 id="orgfea88d9"><span class="section-number-2">1</span> Uninformed Search</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Our first three algorithms are called <i>uninformed</i> search algorithms.
+</p>
+
+<ol class="org-ol">
+<li value="8">Why might breadth-first search and Dijkstra&rsquo;s algorithm be considered <i>uninformed</i>?</li>
+<li>In breadth-first search, where do newly expanded nodes go in the open list?  Do you know the name of the abstract data structure where the &ldquo;oldest&rdquo; node comes out first?</li>
+</ol>
+
+<p>
+Our breadth-first search function will return a tuple of the number of nodes visited during the search, the cost of the best found path (or -1 if no path exists), and the best found path (or <code>None</code> if no path exists).
+We&rsquo;ll track the best costs seen so far in a <code>dict</code> called <code>best_costs</code>, along with the best predecessor point (so we can trace backwards later to find the full path).
+Once you have an implementation you&rsquo;d like to test, run <code>python test_path_planning.py</code> to see what the autograder thinks of it.
+Feel free to modify the test file as you like to add tests, try out new examples, and so on.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">def</span> <span style="color: #006699;">breadth_first</span>(terrain:Map, start:Point, goal:Point) -&gt; Tuple[<span style="color: #006FE0;">int</span>, <span style="color: #006FE0;">int</span>, Optional[List[Point]]]:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   open_list: <span style="color: #BA36A5;">List</span>[Point] = [start]
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">We'll treat start specially</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   best_costs: Dict[Point, Tuple[<span style="color: #006FE0;">int</span>, Point]] = {start:(0, start)}
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> = 0
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">while</span> open_list:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Breadth-first search takes the first thing from the list...</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">cost</span>, <span style="color: #BA36A5;">node</span> = open_list.pop(0)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> += 1
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">neighbors</span> = find_neighbors(terrain, node)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">for</span> neighbor, neighbor_cost <span style="color: #0000FF;">in</span> neighbors:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">B. And does something with each neighbor node (where does the new node go in the list?)</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Be sure to track the best cost and predecessor for each new node in `best_costs` too, and avoid re-expanding nodes which we've seen before with better costs. </span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">C. If any path was found to goal, return the best such path.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Otherwise, return:</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> (visit_count, -1, <span style="color: #D0372D;">None</span>)
+</pre>
+</div>
+
+<p>
+Try it out with a few different coordinate pairs:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Example</span>
+<span style="color: #BA36A5;">terrain</span> = load_map(<span style="color: #008000;">'terrain.txt'</span>)
+print_search_result(terrain, breadth_first(terrain, (0, 0), (10, 0)))
+print_search_result(terrain, breadth_first(terrain, (2, 3), (7, 0)))
+print_search_result(terrain, breadth_first(terrain, (5, 5), (0, 1)))
+print_search_result(terrain, breadth_first(terrain, (0, 0), (10, 9)))
+print_search_result(terrain, breadth_first(terrain, (0, 0), (11, 10))) <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">out of bounds!</span>
+</pre>
+</div>
+
+<ol class="org-ol">
+<li value="10">Is the first path found by best-first search guaranteed to be cost-optimal?  Step-optimal?  Is the overall result of best-first search guaranteed to be cost-optimal?</li>
+<li>Graph search algorithms are generally described in terms of the <i>state</i> they are considering and the <i>transition relation</i> which gives successor states.  In your implementation above, what is a state?  What is the transition relation?</li>
+<li>Dijkstra&rsquo;s algorithm differs from breadth-first search in a key way.  What information does it consider which breadth-first search ignores?  What does this mean for our representation of the search state?</li>
+</ol>
+
+<p>
+Let&rsquo;s implement Dijkstra&rsquo;s algorithm next.
+As you may have noticed in your reflection, the search state must now include the net cost to go for a given point in the path:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">def</span> <span style="color: #006699;">dijkstra</span>(terrain:Map, start:Point, goal:Point) -&gt; Tuple[<span style="color: #006FE0;">int</span>, <span style="color: #006FE0;">int</span>, Optional[List[Point]]]:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   open_list: List[Tuple[<span style="color: #006FE0;">int</span>, Point]] = [(0, start)]
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   best_costs: Dict[Point, Tuple[<span style="color: #006FE0;">int</span>, Point]] = {start:(0, start)}
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> = 0
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">while</span> open_list:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Dijkstra's search uses the priority queue data structure</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">cost</span>, <span style="color: #BA36A5;">node</span> = heapq.heappop(open_list)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> += 1
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">neighbors</span> = find_neighbors(terrain, node)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">for</span> neighbor, neighbor_cost <span style="color: #0000FF;">in</span> neighbors:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">D. And does something with each neighbor node.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Hint: `heapq.heappush` may be useful here.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Be sure to track the best cost and predecessor for each new node in `best_costs` too!</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> (visit_count, -1, <span style="color: #D0372D;">None</span>)
+</pre>
+</div>
+
+<ol class="org-ol">
+<li value="13">Try Dijkstra&rsquo;s algorithm out on the examples from before.  How does it differ in terms of visited nodes?  In terms of found paths?</li>
+<li>Is the first path found by Dijkstra&rsquo;s algorithm guaranteed to be cost-optimal?  What optimizations would be possible if the first-found path were also an optimal path?</li>
+<li>In breadth-first search, we were able to eventually terminate by declining to expand nodes we had already expanded previously with better costs.  Is special code to do this necessary in Dijkstra&rsquo;s algorithm?  Why or why not?</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org6a07977" class="outline-2">
+<h2 id="org6a07977"><span class="section-number-2">2</span> Heuristic Search</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+We learned something interesting by comparing breadth-first search and Dijkstra&rsquo;s algorithm.
+Both algorithms are guaranteed to give optimal solutions, but intuitively it doesn&rsquo;t make much sense to e.g. explore all the water tiles before trying the bridge.
+In this path planning domain, we can use a <i>heuristic</i>&#x2014;an informed guess&#x2014;about the <i>remaining</i> path cost from a given tile in order to inform our search process.
+</p>
+
+<ol class="org-ol">
+<li value="16">Given an \((x,y)\) position and a goal \((gx,gy)\), and assuming every step is as cheap as possible, what is the least number of steps required to get from \((x,y)\) to \((gx,gy)\), ignoring the tiles at each position in the map?  (Remember that diagonal moves are not possible!)</li>
+</ol>
+
+<p>
+In four-connected graphs, the Manhattan Distance (or rectilinear distance, or city-block distance) is a good choice for a heuristic.
+It measures how many &ldquo;steps&rdquo; you must take in each direction to get from one point to another, ignoring movement costs.
+Let&rsquo;s write it in Python:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">def</span> <span style="color: #006699;">manhattan_distance</span>(p1:Point, p2:Point) -&gt; <span style="color: #006FE0;">int</span>:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">E. Implement it here!  To calculate absolute value in Python, you can use abs(a-b).</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> 0
+</pre>
+</div>
+
+<p>
+How does pathfinding go if we <i>just</i> use the heuristic value and ignore the cost to go so far?
+</p>
+
+<ol class="org-ol">
+<li value="17">Do you think this strategy would give optimal paths if we always picked the first path we found?  Why or why not?</li>
+<li>Does best-first search need to return the first found path or should it wait until examining all paths, as in breadth-first search?  Why?</li>
+<li>Should best-first search avoid re-expanding nodes with higher costs, as we did for the earlier algorithms?</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">def</span> <span style="color: #006699;">best_first</span>(terrain:Map, start:Point, goal:Point) -&gt; Tuple[<span style="color: #006FE0;">int</span>, <span style="color: #006FE0;">int</span>, Optional[List[Point]]]:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">In the open list we use heuristic values as the priority</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   open_list: List[Tuple[<span style="color: #006FE0;">int</span>, Point]] = [(manhattan_distance(start, goal), start)]
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">But in best_costs we still want to track real costs</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   best_costs: Dict[Point, Tuple[<span style="color: #006FE0;">int</span>, Point]] = {start:(0, start)}
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> = 0
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">while</span> open_list:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">_h</span>, <span style="color: #BA36A5;">node</span> = heapq.heappop(open_list)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> += 1
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">neighbors</span> = find_neighbors(terrain, node)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">for</span> neighbor, neighbor_cost <span style="color: #0000FF;">in</span> neighbors:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">F. And best-first search also does something with each neighbor node.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Hint: `heapq.heappush` is still useful.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Be sure to track the best cost and predecessor for each new node in `best_costs`, and use the heuristic value for this node to guide the search.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> (visit_count, -1, <span style="color: #D0372D;">None</span>)
+</pre>
+</div>
+
+<ol class="org-ol">
+<li value="20">Try best-first search on the examples from before.  How does it differ in terms of visited nodes?  In terms of found paths?</li>
+<li>What is the main difference between best-first search and your implementation of Dijkstra&rsquo;s algorithm from before?</li>
+</ol>
+
+<p>
+At this point, we are equipped to explore <i>A*</i>, an extremely popular informed search algorithm that combines the best aspects of best-first search (exploring promising parts of the search space) and Dijkstra&rsquo;s search (exploring cheaper options before more expensive ones).
+</p>
+
+<ol class="org-ol">
+<li value="22">Can you think of a way to combine the priority information from Dijkstra&rsquo;s algorithm (cost to get there) and from best-first search (estimated cost to reach the goal)?  What is the priority in the search state, and what do you track in <code>best_costs</code>?</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">def</span> <span style="color: #006699;">astar</span>(terrain:Map, start:Point, goal:Point) -&gt; Tuple[<span style="color: #006FE0;">int</span>, <span style="color: #006FE0;">int</span>, Optional[List[Point]]]:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">G. What do we use as priority values in the open list? </span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   open_list: List[Tuple[<span style="color: #006FE0;">int</span>, Point]] = [(?, start)]
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">In best_costs we still want to track real costs</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   best_costs: Dict[Point, Tuple[<span style="color: #006FE0;">int</span>, Point]] = {start:(0, start)}
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> = 0
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">while</span> open_list:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">_f</span>, <span style="color: #BA36A5;">node</span> = heapq.heappop(open_list)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">visit_count</span> += 1
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #BA36A5;">neighbors</span> = find_neighbors(terrain, node)
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">for</span> neighbor, neighbor_cost <span style="color: #0000FF;">in</span> neighbors:
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">F. And A* also does something with each neighbor node.  You need to calculate both the heuristic value and the cost to get to this neighbor, and do something with the result.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Hint: `heapq.heappush` is still useful.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Be sure to track the best cost and predecessor for each new node in `best_costs`, and use your combined priority for this node to guide the search.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> (visit_count, -1, <span style="color: #D0372D;">None</span>)
+
+</pre>
+</div>
+
+<ol class="org-ol">
+<li value="23">Compare your implementation of A* to your previous implementations in terms of nodes visited and paths found.</li>
+<li>Is the first solution found by A* in this domain guaranteed to be cost-optimal?</li>
+<li>What if we replace calls to the heuristic function (used as part of determining priority) with the constant 0?  Does this behave like a different algorithm in terms of nodes visited and path found?</li>
+<li>How about if we replace the uses of the cost so far in the priority calculations with 0?  Does this behave like a different algorithm in terms of nodes visited and path found?</li>
+<li>When a heuristic <i>overestimates</i> the distance to the goal, it is called <i>inadmissible</i>.  We could make our heuristic inadmissible just by multiplying its output by some factor, say 10, before using its results in the priority calculation.  How does this affect nodes visited and path found for the examples given above?</li>
+<li>If you want an extra credit opportunity (up to 10% assignment credit), come up with some interesting/cool map text files and submit them as separate text files along with your assignment.  In this reflection slot, write why you think each map is interesting.</li>
+</ol>
+
+<p>
+A* has interesting behavior with inadmissible heuristics, generally finding solutions earlier&#x2014;but without the guarantee of optimality.  
+There is a deep literature in tweaks on A* for different domains and applications, including replanning (finding a new path after the path we&rsquo;ve been following becomes invalid), anytime planning (getting a suboptimal solution quickly but improving the plan over time), and many other areas.  
+Some approaches like jump-point search or &theta;* try to further minimize the number of nodes examined by taking advantage of structural details of top-down path planning.
+</p>
+
+<p>
+Now that you&rsquo;re all done with this, you&rsquo;re ready for <i>task planning.</i>
+Proceed to &ldquo;Craft Planning with Iterative Widening.&rdquo;
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2018-08-29 Wed 00:00</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
