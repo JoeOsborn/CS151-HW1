@@ -39,3 +39,11 @@ source activate minecraft-assignments
 python mission_script.py
 
 #+END_SRC
+
+In non-Malmo exercises, you'll need to run this in any Terminal window you want to use (or use emacs's =pyenv-venv= package, or...):
+#+BEGIN_SRC bash
+# One time in each terminal window you open
+source activate minecraft-assignments 
+# Anytime you want to run a program
+python test_path_planning.py # For example
+#+END_SRC

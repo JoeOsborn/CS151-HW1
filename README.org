@@ -20,3 +20,5 @@
   - The hash of the latest commit in the PR
   - Your teammate, if any
   - Any issues or problems I should know about
+
+* This assignment has two parts, path planning and crafting!  Don't forget one!
