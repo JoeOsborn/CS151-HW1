@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2018-09-06 Thu 16:28 -->
+<!-- 2018-09-07 Fri 16:26 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -233,12 +233,12 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org7a73084">1. Conda instructions (Mac, Linux)</a></li>
+<li><a href="#org6b3e590">1. Conda instructions (Mac, Linux)</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org7a73084" class="outline-2">
-<h2 id="org7a73084"><span class="section-number-2">1</span> Conda instructions (Mac, Linux)</h2>
+<div id="outline-container-org6b3e590" class="outline-2">
+<h2 id="org6b3e590"><span class="section-number-2">1</span> Conda instructions (Mac, Linux)</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 These instructions assume a working miniconda or anaconda installation.
@@ -249,7 +249,7 @@ First, you'll need to set up a conda environment for the projects:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">conda create -n minecraft-assignments <span style="color: #BA36A5;">python</span>=3.6 numpy scipy matplotlib scikit-learn ffmpeg openjdk pulp
+<pre class="src src-bash">conda create -n minecraft-assignments <span style="color: #BA36A5;">python</span>=3.6 numpy scipy matplotlib scikit-learn ffmpeg openjdk
 <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">This is a line you'll be typing in every new terminal window</span>
 <span style="color: #006FE0;">source</span> activate minecraft-assignments
 
@@ -267,11 +267,22 @@ conda install -c crowdai malmo
 </div>
 
 <p>
-Next we'll throw in the z3-solver package, which has no Conda recipe, along with some Python helpers used by various development tools:
+Next we'll throw in pulp and the z3-solver package, which have no Conda recipe, along with some Python helpers used by various development tools:
 </p>
 <div class="org-src-container">
 <pre class="src src-bash">
-pip install z3-solver flake8 mypy jedi autopep8 yapf black pylint
+pip install pulp z3-solver flake8 mypy jedi autopep8 yapf black pylint
+</pre>
+</div>
+
+<p>
+In non-Malmo exercises, you'll need to run this in any Terminal window you want to use (or use emacs's <code>pyenv-venv</code> package, or&#x2026;):
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">One time in each terminal window you open</span>
+<span style="color: #006FE0;">source</span> activate minecraft-assignments 
+<span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Anytime you want to run a program</span>
+python test_path_planning.py <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">For example</span>
 </pre>
 </div>
 
@@ -296,23 +307,12 @@ python mission_script.py
 
 </pre>
 </div>
-
-<p>
-In non-Malmo exercises, you'll need to run this in any Terminal window you want to use (or use emacs's <code>pyenv-venv</code> package, or&#x2026;):
-</p>
-<div class="org-src-container">
-<pre class="src src-bash"><span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">One time in each terminal window you open</span>
-<span style="color: #006FE0;">source</span> activate minecraft-assignments 
-<span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Anytime you want to run a program</span>
-python test_path_planning.py <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">For example</span>
-</pre>
-</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Joseph C. Osborn</p>
-<p class="date">Created: 2018-09-06 Thu 16:28</p>
+<p class="date">Created: 2018-09-07 Fri 16:26</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
