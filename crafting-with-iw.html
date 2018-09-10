@@ -496,8 +496,8 @@ Let&rsquo;s implement the transition relation now:
 Let&rsquo;s try it.
 </p>
 
-<div id="outline-container-org2a12809" class="outline-2">
-<h2 id="org2a12809"><span class="section-number-2">1</span> Planning via Graph Search</h2>
+<div id="outline-container-org741d56f" class="outline-2">
+<h2 id="org741d56f"><span class="section-number-2">1</span> Planning via Graph Search</h2>
 <div class="outline-text-2" id="text-1">
 <ol class="org-ol">
 <li value="8">Consider your implementation of Dijkstra&rsquo;s algorithm.  What would need to change so it works on states-and-actions instead of locations-and-directions?</li>
@@ -510,6 +510,7 @@ Let&rsquo;s try it.
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Feel free to use or modify the solution printing routine from the last exercise.</span>
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Return a tuple of (nodes_visited, -1, None) if no path exists, or else a tuple of (nodes_visited, cost, path) where path is a list of recipe names.</span>
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">You should also use limit to avoid visiting too many nodes before returning _something_.</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Finally, you can check whether a State _satisfies_ a goal by checking `state &gt;= goal` </span>
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">pass</span>
 </pre>
 </div>
@@ -535,8 +536,8 @@ To try it out:
 </div>
 </div>
 
-<div id="outline-container-org50af5a6" class="outline-2">
-<h2 id="org50af5a6"><span class="section-number-2">2</span> Planning with Iterative Widening</h2>
+<div id="outline-container-org51efe85" class="outline-2">
+<h2 id="org51efe85"><span class="section-number-2">2</span> Planning with Iterative Widening</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Let&rsquo;s compare against a dedicated planning algorithm, rather than applying graph search naively.
@@ -595,7 +596,7 @@ We also need to be able to convert initial and goal states into sets of proposit
 <span style="color: #0000FF;">def</span> <span style="color: #006699;">recipe_propositions</span>(recipe: Recipe) -&gt; Set[Proposition]:
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   propositions: <span style="color: #BA36A5;">Set</span>[Proposition] = <span style="color: #006FE0;">set</span>()
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">G. Do something with recipe.consumes, recipe.produces, and recipe.requires.</span>
-<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Emit, for this recipe, all the propositions entailed by the postconditions and the _minimal_ set of propositions required for the preconditions (i.e., don't need to output wood &gt;= 2, wood &gt;= 1, wood &gt;= 0 if the recipe needs 2 wood.)</span>
+<span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Emit, for this recipe, all the propositions entailed by the preconditions and the _minimal_ set of propositions embodied in the preconditions (i.e., don't need to output wood &gt;= 2, wood &gt;= 1, wood &gt;= 0 if the recipe creates 2 wood.)</span>
 <span style="color: #4C9ED9; background-color: #ffffff;"> </span>   <span style="color: #0000FF;">return</span> propositions
 
 <span style="color: #BA36A5;">recipe_propositions</span> = <span style="color: #006FE0;">set</span>()
